@@ -22,7 +22,7 @@ export async function proxy(request: NextRequest) {
   }
 
   if (isAuthenticated && isLoginPage) {
-    const listUrl = new URL("/fm-group/list", request.url);
+    const listUrl = new URL("/pickup-group/list", request.url);
     return NextResponse.redirect(listUrl);
   }
 

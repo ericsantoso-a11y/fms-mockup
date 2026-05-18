@@ -1,4 +1,4 @@
-export interface FMGroup {
+export interface PickupGroup {
   id: number;
   name: string;
   groupLead: string;
@@ -7,10 +7,10 @@ export interface FMGroup {
   description: string;
 }
 
-export const mockFMGroups: FMGroup[] = [
+export const mockPickupGroups: PickupGroup[] = [
   {
     id: 12,
-    name: "FM Alpha Team",
+    name: "Pickup Alpha Team",
     groupLead: "Eric Santoso",
     groupLeadId: 2001,
     groupMembers: [
@@ -21,7 +21,7 @@ export const mockFMGroups: FMGroup[] = [
   },
   {
     id: 11,
-    name: "FM Beta Team",
+    name: "Pickup Beta Team",
     groupLead: "Michael Chen",
     groupLeadId: 2010,
     groupMembers: [
@@ -33,7 +33,7 @@ export const mockFMGroups: FMGroup[] = [
   },
   {
     id: 10,
-    name: "FM Gamma",
+    name: "Pickup Gamma",
     groupLead: "Linda Goh",
     groupLeadId: 2020,
     groupMembers: [{ id: 2021, name: "Tom Ng" }],
@@ -41,7 +41,7 @@ export const mockFMGroups: FMGroup[] = [
   },
   {
     id: 9,
-    name: "XGG FM",
+    name: "XGG Pickup",
     groupLead: "Raj Kumar",
     groupLeadId: 2030,
     groupMembers: [
@@ -52,7 +52,7 @@ export const mockFMGroups: FMGroup[] = [
   },
   {
     id: 8,
-    name: "FM Central Hub",
+    name: "Pickup Central Hub",
     groupLead: "Zhen Wei",
     groupLeadId: 2040,
     groupMembers: [
@@ -64,7 +64,7 @@ export const mockFMGroups: FMGroup[] = [
   },
   {
     id: 7,
-    name: "FM East Wing",
+    name: "Pickup East Wing",
     groupLead: "Ivan Ng",
     groupLeadId: 2050,
     groupMembers: [{ id: 2051, name: "Felicia Lim" }],
@@ -72,7 +72,7 @@ export const mockFMGroups: FMGroup[] = [
   },
   {
     id: 6,
-    name: "FM West Wing",
+    name: "Pickup West Wing",
     groupLead: "Jasmine Ho",
     groupLeadId: 2060,
     groupMembers: [
@@ -83,7 +83,7 @@ export const mockFMGroups: FMGroup[] = [
   },
   {
     id: 5,
-    name: "test_fm_group",
+    name: "test_pickup_group",
     groupLead: "SPX_testing",
     groupLeadId: 1159,
     groupMembers: [{ id: 1239, name: "ren jia" }],
@@ -91,7 +91,7 @@ export const mockFMGroups: FMGroup[] = [
   },
   {
     id: 4,
-    name: "FM Locker Run",
+    name: "Pickup Locker Run",
     groupLead: "PT3",
     groupLeadId: 1237,
     groupMembers: [],
@@ -99,7 +99,7 @@ export const mockFMGroups: FMGroup[] = [
   },
   {
     id: 3,
-    name: "FM Parcel Transfer",
+    name: "Pickup Parcel Transfer",
     groupLead: "kevin felixiano",
     groupLeadId: 1234,
     groupMembers: [{ id: 1230, name: "Yiming" }],
@@ -107,7 +107,7 @@ export const mockFMGroups: FMGroup[] = [
   },
   {
     id: 2,
-    name: "FM Group F",
+    name: "Pickup Group F",
     groupLead: "sanjin_de3",
     groupLeadId: 1286,
     groupMembers: [
@@ -118,7 +118,7 @@ export const mockFMGroups: FMGroup[] = [
   },
   {
     id: 1,
-    name: "xgtestgroup FM",
+    name: "xgtestgroup Pickup",
     groupLead: "joyce test 9",
     groupLeadId: 1223,
     groupMembers: [{ id: 1224, name: "xgtestSub" }],
@@ -142,7 +142,18 @@ export const mockDriverOptions = [
   { id: 2040, name: "Zhen Wei" },
   { id: 2041, name: "Marcus Tay" },
   { id: 2042, name: "Nurul Ain" },
+  { id: 2043, name: "Derek Foo" },
   { id: 2050, name: "Ivan Ng" },
+  { id: 2051, name: "Felicia Lim" },
+  { id: 2060, name: "Jasmine Ho" },
+  { id: 2061, name: "Bernard Koh" },
+  { id: 2062, name: "Shirley Chua" },
   { id: 1159, name: "SPX_testing" },
   { id: 1237, name: "PT3" },
+  { id: 1234, name: "kevin felixiano" },
+  { id: 1230, name: "Yiming" },
+  { id: 1239, name: "ren jia" },
+  { id: 1286, name: "sanjin_de3" },
+  { id: 1223, name: "joyce test 9" },
+  { id: 1224, name: "xgtestSub" },
 ];
