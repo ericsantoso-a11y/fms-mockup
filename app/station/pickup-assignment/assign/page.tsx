@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import FMSLayout from "@/components/FMSLayout";
 import { mockPendingSellers } from "@/lib/mockAssignData";
-import { mockDriverOptions } from "@/lib/mockData";
+import { mockDriverOptions, mockStationOptions, mockPickupGroups } from "@/lib/mockData";
 
 type Timeslot = "Today" | "Backlog";
 
@@ -28,8 +28,11 @@ export default function AssignDriverPage() {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [showAssignModal, setShowAssignModal] = useState(false);
-  const [selectedDriver, setSelectedDriver] = useState("");
   const [assignSuccess, setAssignSuccess] = useState(false);
+
+  interface DriverRow { rowId: number; driverId: string; stationId: string; }
+  const [driverRows, setDriverRows] = useState<DriverRow[]>([{ rowId: 1, driverId: "", stationId: "9197" }]);
+  const [nextRowId, setNextRowId] = useState(2);
   const pageSize = 24;
 
   const removeTimeslot = (t: Timeslot) => setTimeslots((prev) => prev.filter((x) => x !== t));
@@ -75,12 +78,40 @@ export default function AssignDriverPage() {
       : [...new Set([...selectedIds, ...pageIds])]
     );
 
+  const addDriverRow = () => {
+    setDriverRows((prev) => [...prev, { rowId: nextRowId, driverId: "", stationId: "9197" }]);
+    setNextRowId((n) => n + 1);
+  };
+  const removeDriverRow = (rowId: number) =>
+    setDriverRows((prev) => prev.length > 1 ? prev.filter((r) => r.rowId !== rowId) : prev);
+  const updateDriverRow = (rowId: number, field: "driverId" | "stationId", value: string) =>
+    setDriverRows((prev) => prev.map((r) => r.rowId === rowId ? { ...r, [field]: value } : r));
+
+  const selectedRows = filtered.filter((r) => selectedIds.includes(r.id));
+  const totalPickupPoints = new Set(selectedRows.map((r) => r.pickupPointId)).size;
+  const totalOrders = selectedRows.reduce((s, r) => s + r.orderCount, 0);
+  const totalWeight = selectedRows.reduce((s, r) => s + r.totalWeightKg, 0);
+  const totalVolume = selectedRows.reduce((s, r) => s + r.totalVolumeCm3, 0);
+
   const handleAssignConfirm = () => {
     setShowAssignModal(false);
     setAssignSuccess(true);
     setSelectedIds([]);
-    setSelectedDriver("");
+    setDriverRows([{ rowId: 1, driverId: "", stationId: "9197" }]);
+    setNextRowId(2);
     setTimeout(() => setAssignSuccess(false), 3000);
+  };
+
+  const canConfirm = driverRows.every((r) => r.driverId !== "");
+
+  const groupLeadMap = new Map(mockPickupGroups.map((g) => [g.groupLeadId, g.name]));
+
+  const formatDriverLabel = (d: typeof mockDriverOptions[0]) => {
+    const isPandan = d.hub === "Pandan Sorting Centre";
+    const hubPart = isPandan ? "" : ` (${d.hub})`;
+    const groupName = groupLeadMap.get(d.id);
+    const groupPart = groupName ? ` — Group: ${groupName}` : "";
+    return `[${d.id}] ${d.name}${hubPart}${groupPart}`;
   };
 
   const pupTypeBadge: Record<string, string> = {
@@ -96,6 +127,14 @@ export default function AssignDriverPage() {
       { label: "Pickup Assignment", href: "/station/pickup-assignment" },
       { label: "Assign Driver" },
     ]}>
+      {/* Simulation tip */}
+      <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded px-4 py-2.5 mb-4 text-sm text-blue-700">
+        <svg className="w-4 h-4 flex-shrink-0 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>Select at least one PUP from the table below, then click <strong>Assign</strong> to open the driver assignment panel and experience the improved Group Lead identification.</span>
+      </div>
+
       {assignSuccess && (
         <div className="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded flex items-center justify-between">
           <span className="text-sm">Driver assigned successfully to {selectedIds.length === 0 ? "selected" : ""} pickups.</span>
@@ -305,31 +344,158 @@ export default function AssignDriverPage() {
         </div>
       </div>
 
-      {/* Assign confirmation modal */}
+      {/* Assign Driver modal */}
       {showAssignModal && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl p-6 w-96">
-            <h3 className="text-base font-semibold text-gray-800 mb-1">Assign Driver</h3>
-            <p className="text-sm text-gray-500 mb-4">
-              Assigning <span className="font-semibold text-gray-700">{selectedIds.length}</span> Shop(s)/DOP(s) to a driver
-            </p>
-            <label className="block text-sm text-gray-700 mb-1">Select Driver <span className="text-red-500">*</span></label>
-            <select
-              value={selectedDriver}
-              onChange={(e) => setSelectedDriver(e.target.value)}
-              className="w-full border border-gray-300 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:border-red-400 mb-5"
-            >
-              <option value="">Please Select</option>
-              {mockDriverOptions.slice(0, 8).map((d) => (
-                <option key={d.id} value={String(d.id)}>[{d.id}] {d.name}</option>
-              ))}
-            </select>
-            <div className="flex justify-end gap-3">
-              <button onClick={() => setShowAssignModal(false)} className="border border-gray-300 text-gray-600 hover:bg-gray-50 px-4 py-2 rounded text-sm">Cancel</button>
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-3xl">
+            {/* Modal header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+              <h3 className="text-base font-semibold text-gray-800">Assign Driver</h3>
+              <button onClick={() => setShowAssignModal(false)} className="text-gray-400 hover:text-gray-600">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="px-6 py-4 space-y-5">
+              {/* Pending Assign Orders stats */}
+              <div>
+                <p className="text-sm text-gray-500 mb-2">Pending Assign Orders</p>
+                <div className="relative border border-gray-200 rounded">
+                  <div className="overflow-x-auto">
+                    <div className="flex items-center gap-8 px-4 py-3 text-sm whitespace-nowrap min-w-max">
+                      <span className="text-gray-600">Total Pickup Point: <span className="font-semibold text-gray-800">{totalPickupPoints}</span></span>
+                      <span className="text-gray-600">Total Order: <span className="font-semibold text-gray-800">{totalOrders}</span></span>
+                      <span className="text-gray-600">Total Order Weight(kg): <span className="font-semibold text-gray-800">{totalWeight.toFixed(3)}</span></span>
+                      <span className="text-gray-600">Total Order Volume(cm³): <span className="font-semibold text-gray-800">{totalVolume}</span></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Driver section */}
+              <div>
+                <p className="text-sm font-medium text-gray-800 mb-3">
+                  <span className="text-red-500 mr-1">*</span>Driver
+                </p>
+
+                {/* Capacity bars */}
+                <div className="grid grid-cols-3 gap-4 mb-4">
+                  {[
+                    { label: "Weight Capacity", tooltip: "Used weight / Vehicle weight capacity", value: `${totalWeight.toFixed(3)}/-` },
+                    { label: "Volume Capacity", tooltip: "Used volume / Vehicle volume capacity", value: `${totalVolume}/-` },
+                    { label: "Order Capacity", tooltip: "Order Capacity = Assigned Orders / Vehicle Order Capacity", value: `${totalOrders}/-` },
+                  ].map(({ label, tooltip, value }) => (
+                    <div key={label} className="relative group">
+                      <div className="flex items-center gap-1 mb-1">
+                        <span className="text-xs text-gray-500">{label}</span>
+                        <div className="relative inline-block">
+                          <svg className="w-3.5 h-3.5 text-gray-400 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 bg-gray-800 text-white text-xs rounded px-2 py-1.5 opacity-0 group-hover:opacity-100 pointer-events-none z-10 whitespace-normal text-center">
+                            {tooltip}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                          <div className="h-full bg-orange-400 rounded-full" style={{ width: "30%" }} />
+                        </div>
+                        <span className="text-xs text-gray-500 whitespace-nowrap">{value}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Driver rows table */}
+                <div className="border border-gray-200 rounded overflow-hidden">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-gray-50 border-b border-gray-200">
+                        <th className="text-left px-3 py-2.5 text-xs font-medium text-gray-600">Driver</th>
+                        <th className="text-left px-3 py-2.5 text-xs font-medium text-gray-600">
+                          <span className="flex items-center gap-1">
+                            Handover Station
+                            <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          </span>
+                        </th>
+                        <th className="text-left px-3 py-2.5 text-xs font-medium text-gray-600">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {driverRows.map((row) => (
+                        <tr key={row.rowId} className="border-b border-gray-100 last:border-0">
+                          <td className="px-3 py-2.5">
+                            <select
+                              value={row.driverId}
+                              onChange={(e) => updateDriverRow(row.rowId, "driverId", e.target.value)}
+                              className="w-full border border-gray-300 rounded px-2 py-1.5 text-sm bg-white focus:outline-none focus:border-red-400"
+                            >
+                              <option value="">Please Select</option>
+                              {mockDriverOptions.map((d) => (
+                                <option key={d.id} value={String(d.id)}>
+                                  {formatDriverLabel(d)}
+                                </option>
+                              ))}
+                            </select>
+                          </td>
+                          <td className="px-3 py-2.5">
+                            <select
+                              value={row.stationId}
+                              onChange={(e) => updateDriverRow(row.rowId, "stationId", e.target.value)}
+                              className="w-full border border-gray-300 rounded px-2 py-1.5 text-sm bg-white focus:outline-none focus:border-red-400"
+                            >
+                              {mockStationOptions.map((s) => (
+                                <option key={s.id} value={String(s.id)}>[{s.id}] {s.name}</option>
+                              ))}
+                            </select>
+                          </td>
+                          <td className="px-3 py-2.5">
+                            <button
+                              onClick={() => removeDriverRow(row.rowId)}
+                              disabled={driverRows.length === 1}
+                              className="text-red-400 hover:text-red-600 disabled:opacity-30 disabled:cursor-not-allowed"
+                              title="Remove"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                <button
+                  onClick={addDriverRow}
+                  className="mt-2 flex items-center gap-1 text-sm text-red-600 hover:text-red-700 font-medium"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  Add Driver
+                </button>
+              </div>
+            </div>
+
+            {/* Modal footer */}
+            <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-200">
+              <button
+                onClick={() => setShowAssignModal(false)}
+                className="border border-gray-300 text-gray-600 hover:bg-gray-50 px-5 py-2 rounded text-sm"
+              >
+                Cancel
+              </button>
               <button
                 onClick={handleAssignConfirm}
-                disabled={!selectedDriver}
-                className="bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white px-4 py-2 rounded text-sm font-medium"
+                disabled={!canConfirm}
+                className="bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white px-5 py-2 rounded text-sm font-medium"
               >
                 Confirm
               </button>

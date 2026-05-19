@@ -3,7 +3,21 @@ import { useState } from "react";
 import Link from "next/link";
 import FMSLayout from "@/components/FMSLayout";
 import FuzzySearch from "@/components/FuzzySearch";
+import FloatingWhatsNew from "@/components/FloatingWhatsNew";
 import { mockPickupGroups, mockDriverOptions } from "@/lib/mockData";
+
+const ADMIN_CHANGES = [
+  {
+    title: "New Pickup Group Module",
+    description:
+      "A dedicated Pickup Group module has been introduced under Workforce Management. Operations managers can now create and manage Pickup Groups, designate a Group Lead (Main Driver), and assign Team Members — enabling structured, group-based fleet coordination directly from the FMS portal.",
+  },
+  {
+    title: "Group Lead & Member Configuration",
+    description:
+      "Each Pickup Group has a clearly defined Group Lead responsible for the primary task list, and one or more Team Members who operate under the same group. Leads and members can be reassigned at any time without affecting existing task allocation.",
+  },
+];
 
 export default function PickupGroupListPage() {
   const [filterGroupText, setFilterGroupText] = useState("");
@@ -72,6 +86,7 @@ export default function PickupGroupListPage() {
 
   return (
     <FMSLayout breadcrumbs={[{ label: "Workforce Management" }, { label: "Pickup Group" }]}>
+      <FloatingWhatsNew module="Admin — Pickup Group" changes={ADMIN_CHANGES} />
       {showSuccess && (
         <div className="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded flex items-center justify-between">
           <span className="text-sm">Pickup Group created successfully.</span>

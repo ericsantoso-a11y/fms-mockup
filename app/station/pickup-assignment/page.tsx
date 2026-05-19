@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import FMSLayout from "@/components/FMSLayout";
+import FloatingWhatsNew from "@/components/FloatingWhatsNew";
 import { mockPickupAssignments, PickupStatus } from "@/lib/mockStationData";
 
 const STATUS_STYLE: Record<PickupStatus, string> = {
@@ -11,6 +12,19 @@ const STATUS_STYLE: Record<PickupStatus, string> = {
   Canceled: "bg-orange-50 text-orange-500 border border-orange-200",
   Failed: "bg-red-50 text-red-500 border border-red-200",
 };
+
+const STATION_CHANGES = [
+  {
+    title: "Group-aware Task Assignment",
+    description:
+      "When a pickup task is assigned to a Group Lead (Main Driver), it is automatically made visible and actionable by every Team Member in the same FM Group — no additional steps required. The whole group moves together.",
+  },
+  {
+    title: "Group Lead Identification in Assignment Screen",
+    description:
+      "The driver selection dropdown now clearly shows which drivers are Group Leads, including the name of the FM Group they lead. This makes it easy for dispatchers to assign to the right lead and ensure the entire team picks up the workload.",
+  },
+];
 
 export default function PickupAssignmentPage() {
   const router = useRouter();
@@ -48,6 +62,16 @@ export default function PickupAssignmentPage() {
 
   return (
     <FMSLayout breadcrumbs={[{ label: "Pickup" }, { label: "Pickup Assignment" }]}>
+      <FloatingWhatsNew module="Pandan SOC — Pickup Assignment" changes={STATION_CHANGES} />
+
+      {/* Simulation tip */}
+      <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded px-4 py-2.5 mb-4 text-sm text-blue-700">
+        <svg className="w-4 h-4 flex-shrink-0 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>Try to simulate pickup assignment to feel the difference — click <strong>Assign Driver</strong> and observe how group leads are identified in the driver list.</span>
+      </div>
+
       {/* Filters */}
       <div className="bg-white rounded border border-gray-200 p-4 mb-4 space-y-3">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">

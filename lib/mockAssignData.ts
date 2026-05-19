@@ -15,6 +15,9 @@ export interface PendingSeller {
   sellerPupTag: string;
   preferredPickupTime: string;
   eta: string;
+  orderCount: number;
+  totalWeightKg: number;
+  totalVolumeCm3: number;
 }
 
 const serviceTypes: ServiceType[] = ["Standard", "Standard", "Sameday", "Express", "Express", "Standard"];
@@ -48,6 +51,10 @@ const pupIds = [
   "PUP20240512001BX", "PUP20240309002WL",
 ];
 
+const orderCounts = [3, 5, 2, 8, 1, 4, 6, 7];
+const weights = [12.5, 38.139, 5.2, 24.8, 1.0, 18.6, 30.0, 42.3];
+const volumes = [0, 0, 1200, 3500, 0, 800, 0, 2100];
+
 export const mockPendingSellers: PendingSeller[] = Array.from({ length: 72 }, (_, i) => ({
   id: i + 1,
   pickupPointId: pupIds[i % pupIds.length] + (i >= 8 ? `_${i}` : ""),
@@ -62,4 +69,7 @@ export const mockPendingSellers: PendingSeller[] = Array.from({ length: 72 }, (_
   sellerPupTag: tags[i % tags.length],
   preferredPickupTime: "-",
   eta: "-",
+  orderCount: orderCounts[i % orderCounts.length],
+  totalWeightKg: weights[i % weights.length],
+  totalVolumeCm3: volumes[i % volumes.length],
 }));

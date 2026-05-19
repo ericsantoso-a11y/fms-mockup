@@ -3,11 +3,12 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
-type Context = "admin" | "station";
+type Context = "admin" | "station" | "driverapp";
 
 const CONTEXTS = [
   { value: "admin" as Context, label: "Admin" },
   { value: "station" as Context, label: "Pandan Sorting Centre" },
+  { value: "driverapp" as Context, label: "Driver App" },
 ];
 
 const adminItems = [
@@ -60,7 +61,9 @@ export default function Sidebar() {
   const router = useRouter();
 
   const defaultContext: Context =
-    pathname.startsWith("/station") ? "station" : "admin";
+    pathname.startsWith("/station") ? "station"
+    : pathname.startsWith("/driver-app") ? "driverapp"
+    : "admin";
   const [context, setContext] = useState<Context>(defaultContext);
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
@@ -76,11 +79,12 @@ export default function Sidebar() {
     setContext(ctx);
     setShowContextMenu(false);
     if (ctx === "station") router.push("/station/pickup-assignment");
+    else if (ctx === "driverapp") router.push("/driver-app");
     else router.push("/pickup-group/list");
   };
 
   const currentLabel = CONTEXTS.find((c) => c.value === context)?.label ?? "Admin";
-  const items = context === "admin" ? adminItems : stationItems;
+  const items = context === "admin" ? adminItems : context === "station" ? stationItems : [];
 
   return (
     <div className="w-52 min-h-screen flex flex-col flex-shrink-0" style={{ backgroundColor: "#113366" }}>
