@@ -3,7 +3,13 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
+type Project = "fms" | "ct";
 type Context = "admin" | "station" | "driverapp";
+
+const PROJECTS = [
+  { value: "fms" as Project,  label: "FMS — Pickup Group", dot: "bg-blue-400" },
+  { value: "ct"  as Project,  label: "Control Tower",      dot: "bg-emerald-400" },
+];
 
 const CONTEXTS = [
   { value: "admin" as Context, label: "Admin" },
@@ -56,9 +62,40 @@ const stationItems = [
   { label: "Ticket Management", href: "#", children: [] },
 ];
 
+const ctItems = [
+  {
+    label: "Overview",
+    defaultOpen: true,
+    children: [
+      { label: "Dashboard", href: "/control-tower" },
+    ],
+  },
+  {
+    label: "Live Operations",
+    defaultOpen: false,
+    children: [
+      { label: "Fleet Tracking", href: "#" },
+      { label: "Route Monitoring", href: "#" },
+      { label: "Incident Management", href: "#" },
+    ],
+  },
+  {
+    label: "Analytics",
+    defaultOpen: false,
+    children: [
+      { label: "Performance Reports", href: "#" },
+      { label: "SLA Dashboard", href: "#" },
+    ],
+  },
+];
+
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
+
+  const defaultProject: Project = pathname.startsWith("/control-tower") ? "ct" : "fms";
+  const [project, setProject] = useState<Project>(defaultProject);
+  const [showProjectMenu, setShowProjectMenu] = useState(false);
 
   const defaultContext: Context =
     pathname.startsWith("/station") ? "station"
@@ -83,21 +120,67 @@ export default function Sidebar() {
     else router.push("/pickup-group/list");
   };
 
+  const switchProject = (p: Project) => {
+    setProject(p);
+    setShowProjectMenu(false);
+    if (p === "ct") router.push("/control-tower");
+    else router.push("/pickup-group/list");
+  };
+
+  const currentProject = PROJECTS.find((p) => p.value === project)!;
   const currentLabel = CONTEXTS.find((c) => c.value === context)?.label ?? "Admin";
-  const items = context === "admin" ? adminItems : context === "station" ? stationItems : [];
+  const items = project === "ct" ? ctItems : context === "admin" ? adminItems : context === "station" ? stationItems : [];
 
   return (
     <div className="w-52 min-h-screen flex flex-col flex-shrink-0" style={{ backgroundColor: "#113366" }}>
       {/* Logo */}
-      <div className="px-4 py-4 border-b border-white/10">
-        <div className="flex items-center gap-2">
+      <div className="px-4 pt-4 pb-3 border-b border-white/10">
+        <div className="flex items-center gap-2 mb-3">
           <span className="text-2xl font-bold text-white tracking-wide">FMS</span>
           <span className="text-xs bg-blue-400 text-white px-1 py-0.5 rounded font-semibold">Mockup</span>
         </div>
+
+        {/* Project switcher */}
+        <div className="relative">
+          <button
+            onClick={() => setShowProjectMenu(!showProjectMenu)}
+            className="w-full flex items-center justify-between px-2 py-1.5 rounded text-xs font-medium text-white/80 hover:bg-white/10 transition-colors border border-white/20"
+          >
+            <div className="flex items-center gap-1.5 min-w-0">
+              <div className={`w-2 h-2 rounded-full flex-shrink-0 ${currentProject.dot}`} />
+              <span className="truncate">{currentProject.label}</span>
+            </div>
+            <svg
+              className={`w-3 h-3 text-white/50 flex-shrink-0 ml-1 transition-transform ${showProjectMenu ? "rotate-180" : ""}`}
+              fill="currentColor" viewBox="0 0 20 20"
+            >
+              <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+          </button>
+
+          {showProjectMenu && (
+            <div className="absolute left-0 right-0 top-full mt-1 bg-white rounded shadow-lg z-50 overflow-hidden">
+              {PROJECTS.map((p) => (
+                <button
+                  key={p.value}
+                  onClick={() => switchProject(p.value)}
+                  className={`w-full text-left px-3 py-2.5 text-sm flex items-center gap-2 transition-colors ${
+                    project === p.value
+                      ? "bg-red-50 text-red-600 font-medium"
+                      : "text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  <div className={`w-2 h-2 rounded-full flex-shrink-0 ${p.dot}`} />
+                  {p.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Context switcher */}
-      <div className="px-3 py-2 border-b border-white/10 relative">
+      {/* Context switcher — FMS only */}
+      {project === "fms" && <div className="px-3 py-2 border-b border-white/10 relative">
         <button
           onClick={() => setShowContextMenu(!showContextMenu)}
           className="w-full flex items-center justify-between px-3 py-2 rounded text-sm font-medium text-white hover:bg-white/10 transition-colors"
@@ -128,7 +211,7 @@ export default function Sidebar() {
             ))}
           </div>
         )}
-      </div>
+      </div>}
 
       {/* Search */}
       <div className="px-3 py-2 border-b border-white/10">
