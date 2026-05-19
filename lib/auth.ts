@@ -13,7 +13,7 @@ export const authOptions: NextAuthOptions = {
       if (user.email?.endsWith("@shopee.com")) {
         return true;
       }
-      return "/login?error=AccessDenied";
+      return false;
     },
     async session({ session, token }) {
       return session;
