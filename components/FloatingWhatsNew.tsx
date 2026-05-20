@@ -10,9 +10,10 @@ interface FloatingWhatsNewProps {
   module: string;
   changes: Change[];
   showFrf?: boolean;
+  frfUrl?: string;
 }
 
-export default function FloatingWhatsNew({ module, changes, showFrf = true }: FloatingWhatsNewProps) {
+export default function FloatingWhatsNew({ module, changes, showFrf = true, frfUrl }: FloatingWhatsNewProps) {
   const [pos, setPos] = useState({ x: 0, y: 120 });
   const [collapsed, setCollapsed] = useState(false);
   const dragging = useRef(false);
@@ -99,7 +100,7 @@ export default function FloatingWhatsNew({ module, changes, showFrf = true }: Fl
 
           {showFrf && (
             <a
-              href="https://docs.google.com/document/d/1fonj6rmlOqbSDfe3w28Eq26lIM96uJDWrWmeSQ4DdnE/edit?tab=t.0"
+              href={frfUrl ?? "https://docs.google.com/document/d/1fonj6rmlOqbSDfe3w28Eq26lIM96uJDWrWmeSQ4DdnE/edit?tab=t.0"}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1 text-xs text-blue-600 hover:underline pt-1"
@@ -107,7 +108,7 @@ export default function FloatingWhatsNew({ module, changes, showFrf = true }: Fl
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
               </svg>
-              View full requirements (FRF)
+              {frfUrl ? "View BRD" : "View full requirements (FRF)"}
             </a>
           )}
         </div>

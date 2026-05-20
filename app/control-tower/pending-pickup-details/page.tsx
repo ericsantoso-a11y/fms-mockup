@@ -224,7 +224,7 @@ export default function PendingPickupDetailsPage() {
         { label: "Pending Pickup Dashboard" },
       ]}
     >
-      <FloatingWhatsNew module="Control Tower — Pending Pickup Dashboard" changes={CT_CHANGES} showFrf={false} />
+      <FloatingWhatsNew module="Control Tower — Pending Pickup Dashboard" changes={CT_CHANGES} showFrf frfUrl="https://docs.google.com/document/d/1u5YZL3ARhbqQ4XHweymz8uFctdf1Qy0Fq5uMmPwcbys/edit?tab=t.0" />
       {/* Filters */}
       <div className="bg-white rounded border border-gray-200 p-4 mb-3">
         {/* Row 1 */}

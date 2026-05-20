@@ -1,5 +1,6 @@
 import Sidebar from "./Sidebar";
 import Header from "./Header";
+import FloatingStickyNotes from "./FloatingStickyNotes";
 
 interface FMSLayoutProps {
   children: React.ReactNode;
@@ -16,6 +17,7 @@ export default function FMSLayout({ children, breadcrumbs }: FMSLayoutProps) {
           {children}
         </main>
       </div>
+      <FloatingStickyNotes />
     </div>
   );
 }

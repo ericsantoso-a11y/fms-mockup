@@ -64,27 +64,25 @@ const stationItems = [
 
 const ctItems = [
   {
-    label: "Overview",
+    label: "Dashboard",
     defaultOpen: true,
     children: [
-      { label: "Dashboard", href: "/control-tower" },
+      { label: "Control Tower", href: "/control-tower/overview" },
+      { label: "Pending Pickup Dashboard", href: "/control-tower/pending-pickup-details" },
     ],
   },
   {
-    label: "Live Operations",
-    defaultOpen: false,
+    label: "Case Management",
+    defaultOpen: true,
     children: [
-      { label: "Fleet Tracking", href: "#" },
-      { label: "Route Monitoring", href: "#" },
-      { label: "Incident Management", href: "#" },
+      { label: "Workspace", href: "/control-tower/workspace" },
     ],
   },
   {
-    label: "Analytics",
-    defaultOpen: false,
+    label: "Metrics",
+    defaultOpen: true,
     children: [
-      { label: "Performance Reports", href: "#" },
-      { label: "SLA Dashboard", href: "#" },
+      { label: "FM Control Tower Metrics", href: "/control-tower/fm-metrics" },
     ],
   },
 ];
@@ -106,6 +104,9 @@ export default function Sidebar() {
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     "Workforce Management": true,
     "Pickup": true,
+    "Dashboard": true,
+    "Case Management": true,
+    "Metrics": true,
   });
 
   const toggle = (label: string) => {
@@ -123,7 +124,7 @@ export default function Sidebar() {
   const switchProject = (p: Project) => {
     setProject(p);
     setShowProjectMenu(false);
-    if (p === "ct") router.push("/control-tower");
+    if (p === "ct") router.push("/control-tower/pending-pickup-details");
     else router.push("/pickup-group/list");
   };
 
