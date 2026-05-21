@@ -3,7 +3,7 @@ import FMSLayout from "@/components/FMSLayout";
 
 export default function DriverCallupPage() {
   return (
-    <FMSLayout>
+    <FMSLayout breadcrumbs={[{ label: "Driver Call-up" }]}>
       <div className="flex flex-col items-center justify-center h-full min-h-[60vh] text-center">
         <div className="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center mb-4">
           <svg className="w-8 h-8 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
