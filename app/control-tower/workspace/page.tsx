@@ -94,8 +94,8 @@ export default function WorkspacePage() {
   const [statusFilter, setStatusFilter] = useState("");
   const [applied, setApplied] = useState({ ticketId: "", ticketTitle: "", priorityFilter: "", assigneeFilter: "", statusFilter: "" });
 
-  const [sortCol, setSortCol] = useState<SortCol>(null);
-  const [sortDir, setSortDir] = useState<SortDir>("asc");
+  const [sortCol, setSortCol] = useState<SortCol>("priority");
+  const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
 
@@ -161,6 +161,21 @@ export default function WorkspacePage() {
     if (s === "Resolved") return "bg-green-500";
     return "bg-gray-400";
   };
+  const rowBg = (t: Ticket) => {
+    if (t.status !== "Created") return "border-b border-gray-100 hover:bg-gray-50 transition-colors";
+    if (t.priority === "P1") return "border-b border-red-100 bg-red-50 hover:bg-red-100 transition-colors";
+    if (t.priority === "P2") return "border-b border-orange-50 bg-orange-50 hover:bg-orange-100 transition-colors";
+    return "border-b border-gray-100 hover:bg-gray-50 transition-colors";
+  };
+  const firstCellLeft = (t: Ticket) => {
+    if (t.status !== "Created") return "px-4 py-3 whitespace-nowrap pl-3";
+    if (t.priority === "P1") return "px-4 py-3 whitespace-nowrap pl-3 border-l-[3px] border-l-red-500";
+    if (t.priority === "P2") return "px-4 py-3 whitespace-nowrap pl-3 border-l-[3px] border-l-orange-400";
+    return "px-4 py-3 whitespace-nowrap pl-3 border-l-[3px] border-l-transparent";
+  };
+
+  const p1OpenCount = filtered.filter(t => t.priority === "P1" && t.status === "Created").length;
+  const slaBreachCount = filtered.filter(t => t.slaHours <= 8 && t.status === "Created").length;
 
   const navItems: { key: NavFilter; label: string; count: number }[] = [
     { key: "related-to-me", label: "Related to me", count: assignedToMeCount },
@@ -318,8 +333,8 @@ export default function WorkspacePage() {
                   <div className="w-px h-10 bg-gray-300 flex-shrink-0" />
                   <div className="flex items-center gap-3">
                     <div>
-                      <div className="text-xs text-gray-500 mb-0.5">Open</div>
-                      <span className="text-2xl font-bold text-gray-900">{bannerOpen}</span>
+                      <div className="text-xs font-semibold text-red-600 mb-0.5">Open</div>
+                      <span className="text-2xl font-bold text-red-600">{bannerOpen}</span>
                     </div>
                     <div className="space-y-1">
                       <div className="flex items-center gap-1.5 text-xs text-gray-500">
@@ -423,6 +438,40 @@ export default function WorkspacePage() {
             </div>
           </div>
 
+          {/* Needs Attention strip */}
+          {(p1OpenCount > 0 || slaBreachCount > 0) ? (
+            <div className="flex items-center gap-2.5 px-3.5 py-2 mb-3 bg-red-50 border border-red-200 rounded">
+              <span className="text-xs font-bold text-red-700 uppercase tracking-wide flex-shrink-0">Needs Attention</span>
+              <div className="w-px h-4 bg-red-300 flex-shrink-0" />
+              <div className="flex flex-wrap items-center gap-1.5">
+                {p1OpenCount > 0 && (
+                  <button
+                    onClick={() => { setPriorityFilter("P1"); setStatusFilter("Created"); setApplied(a => ({ ...a, priorityFilter: "P1", statusFilter: "Created" })); setCurrentPage(1); }}
+                    className="flex items-center gap-1.5 bg-red-100 hover:bg-red-200 text-red-700 text-xs font-semibold px-2.5 py-1 rounded-full transition-colors"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-600 inline-block flex-shrink-0" />
+                    {p1OpenCount} P1 unresolved
+                  </button>
+                )}
+                {slaBreachCount > 0 && (
+                  <button
+                    onClick={() => { setStatusFilter("Created"); setApplied(a => ({ ...a, statusFilter: "Created", priorityFilter: "" })); setCurrentPage(1); }}
+                    className="flex items-center gap-1.5 bg-orange-100 hover:bg-orange-200 text-orange-700 text-xs font-semibold px-2.5 py-1 rounded-full transition-colors"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-orange-500 inline-block flex-shrink-0" />
+                    {slaBreachCount} tickets with SLA ≤ 8h
+                  </button>
+                )}
+              </div>
+              <span className="text-xs text-red-400 ml-auto flex-shrink-0">Click a chip to filter</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 px-3.5 py-2 mb-3 bg-green-50 border border-green-200 rounded text-xs text-green-700 font-medium">
+              <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+              All clear — no urgent tickets in current view
+            </div>
+          )}
+
           {/* Table card */}
           <div className="bg-white rounded border border-gray-200">
             <div className="flex items-center gap-2 px-4 py-2.5 border-b border-gray-200">
@@ -457,8 +506,8 @@ export default function WorkspacePage() {
                   {paged.length === 0 ? (
                     <tr><td colSpan={15} className="text-center py-12 text-gray-400">No data found</td></tr>
                   ) : paged.map((t) => (
-                    <tr key={t.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                      <td className="px-4 py-3 whitespace-nowrap"><span className="text-blue-600 hover:underline cursor-pointer font-mono text-xs">{t.id}</span></td>
+                    <tr key={t.id} className={rowBg(t)}>
+                      <td className={firstCellLeft(t)}><span className="text-blue-600 hover:underline cursor-pointer font-mono text-xs">{t.id}</span></td>
                       <td className="px-4 py-3 text-gray-900" style={{ maxWidth: "200px" }}><span className="block truncate" title={t.title}>{t.title}</span></td>
                       <td className={`px-4 py-3 whitespace-nowrap ${priorityClass(t.priority)}`}>{t.priority}</td>
                       <td className="px-4 py-3 text-gray-900 whitespace-nowrap">{t.l1Type}</td>
