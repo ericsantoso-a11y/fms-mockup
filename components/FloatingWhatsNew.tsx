@@ -8,12 +8,13 @@ interface Change {
 
 interface FloatingWhatsNewProps {
   module: string;
+  description?: string;
   changes: Change[];
   showFrf?: boolean;
   frfUrl?: string;
 }
 
-export default function FloatingWhatsNew({ module, changes, showFrf = true, frfUrl }: FloatingWhatsNewProps) {
+export default function FloatingWhatsNew({ module, description, changes, showFrf = true, frfUrl }: FloatingWhatsNewProps) {
   const [pos, setPos] = useState({ x: 0, y: 120 });
   const [collapsed, setCollapsed] = useState(false);
   const dragging = useRef(false);
@@ -86,6 +87,14 @@ export default function FloatingWhatsNew({ module, changes, showFrf = true, frfU
       {/* Body */}
       {!collapsed && (
         <div className="px-4 py-4 space-y-3">
+          {description && (
+            <div className="bg-blue-50 border border-blue-100 rounded-lg px-3 py-2.5">
+              <p className="text-[11px] text-blue-700 leading-relaxed">{description}</p>
+            </div>
+          )}
+          {changes.length > 0 && (
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">What&apos;s New</p>
+          )}
           {changes.map((change, i) => (
             <div key={i} className="flex items-start gap-2.5">
               <div className="w-5 h-5 rounded-full bg-red-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">

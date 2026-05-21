@@ -1,6 +1,22 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import FMSLayout from "@/components/FMSLayout";
+import FloatingWhatsNew from "@/components/FloatingWhatsNew";
+
+const DAC_CHANGES = [
+  {
+    title: "Add Call-up Deadline",
+    description: "Set a cutoff time by which drivers must accept or decline their assigned route, ensuring timely confirmation before dispatch.",
+  },
+  {
+    title: "Enable D-1 Blasting",
+    description: "Stations can now configure the availability confirmation blast to fire the evening before the shift (D-1), giving drivers more advance notice.",
+  },
+  {
+    title: "Adding FM Tab",
+    description: "A dedicated tab for FM (Fleet Manager) stations, enabling separate notification timing configurations for the FM driver pool.",
+  },
+];
 
 type DayOffset = "D-0" | "D-1";
 
@@ -567,6 +583,12 @@ export default function DriverAvailabilityConfigPage() {
           </div>
         </ModalShell>
       )}
+      <FloatingWhatsNew
+        module="Driver Availability Config"
+        description="Configure when to blast out availability and preference collection messages to drivers, set per station. Controls the timing of weekly shift preference reminders and daily availability confirmation requests."
+        changes={DAC_CHANGES}
+        frfUrl="https://docs.google.com/document/d/1w_jAYS4HPlcqXnNY0VfHAqROjbhTJdqs7S9SCRFVhio/edit?tab=t.0#heading=h.r0gdxsbxv8xb"
+      />
     </FMSLayout>
   );
 }

@@ -303,7 +303,7 @@ export default function Sidebar() {
               {openSections[item.label] && (
                 <div style={{ backgroundColor: "rgba(0,0,0,0.15)" }}>
                   {children.map((child) => {
-                    const isActive = child.href !== "#" && pathname.startsWith(child.href);
+                    const isActive = child.href !== "#" && (pathname === child.href || pathname.startsWith(child.href + "/"));
                     return (
                       <Link
                         key={child.label}

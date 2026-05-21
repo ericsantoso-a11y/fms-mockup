@@ -1,6 +1,18 @@
 "use client";
 import { useState } from "react";
 import FMSLayout from "@/components/FMSLayout";
+import FloatingWhatsNew from "@/components/FloatingWhatsNew";
+
+const DA_CHANGES = [
+  {
+    title: "Add More Statuses",
+    description: "Expanded status tracking beyond basic availability — now covers preference set, availability confirmed, call-up confirmed, call-up declined, and ignored (MIA), giving ops full visibility into each driver's progress.",
+  },
+  {
+    title: "Add FM",
+    description: "Fleet Manager drivers are now included in the monitoring view, with their own rows and status tracking alongside regular drivers.",
+  },
+];
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type ShiftStatus = "preference" | "avail-confirmed" | "callup-confirmed" | "callup-declined" | "ignored";
@@ -518,6 +530,12 @@ export default function DriverAvailabilityPage() {
           </div>
         </div>
       </div>
+      <FloatingWhatsNew
+        module="Driver Availability"
+        description="Monitor driver preference, availability, and call-up progress across all scheduled shifts. Drivers who do not respond to any stage of the flow are flagged as MIA and highlighted for ops follow-up."
+        changes={DA_CHANGES}
+        frfUrl="https://docs.google.com/document/d/1w_jAYS4HPlcqXnNY0VfHAqROjbhTJdqs7S9SCRFVhio/edit?tab=t.0#heading=h.r0gdxsbxv8xb"
+      />
     </FMSLayout>
   );
 }
