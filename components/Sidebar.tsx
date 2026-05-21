@@ -3,12 +3,13 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
-type Project = "fms" | "ct";
+type Project = "fms" | "ct" | "dcu";
 type Context = "admin" | "station" | "driverapp";
 
 const PROJECTS = [
   { value: "fms" as Project,  label: "FMS — Pickup Group", dot: "bg-blue-400" },
   { value: "ct"  as Project,  label: "Control Tower",      dot: "bg-emerald-400" },
+  { value: "dcu" as Project,  label: "Driver Call-up",     dot: "bg-orange-400" },
 ];
 
 const CONTEXTS = [
@@ -62,6 +63,18 @@ const stationItems = [
   { label: "Ticket Management", href: "#", children: [] },
 ];
 
+const dcuItems = [
+  {
+    label: "Workforce Management",
+    defaultOpen: true,
+    children: [
+      { label: "Driver Availability Config", href: "/driver-callup/driver-availability-config" },
+      { label: "Driver Availability",        href: "/driver-callup/driver-availability" },
+      { label: "Driver App",                 href: "/driver-callup/driver-app" },
+    ],
+  },
+];
+
 const ctItems = [
   {
     label: "Dashboard",
@@ -87,11 +100,12 @@ const ctItems = [
   },
 ];
 
+
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const defaultProject: Project = pathname.startsWith("/control-tower") ? "ct" : "fms";
+  const defaultProject: Project = pathname.startsWith("/control-tower") ? "ct" : pathname.startsWith("/driver-callup") ? "dcu" : "fms";
   const [project, setProject] = useState<Project>(defaultProject);
   const [showProjectMenu, setShowProjectMenu] = useState(false);
 
@@ -125,12 +139,13 @@ export default function Sidebar() {
     setProject(p);
     setShowProjectMenu(false);
     if (p === "ct") router.push("/control-tower/pending-pickup-details");
+    else if (p === "dcu") router.push("/driver-callup/driver-availability-config");
     else router.push("/pickup-group/list");
   };
 
   const currentProject = PROJECTS.find((p) => p.value === project)!;
   const currentLabel = CONTEXTS.find((c) => c.value === context)?.label ?? "Admin";
-  const items = project === "ct" ? ctItems : context === "admin" ? adminItems : context === "station" ? stationItems : [];
+  const items = project === "ct" ? ctItems : project === "dcu" ? dcuItems : context === "admin" ? adminItems : context === "station" ? stationItems : [];
 
   return (
     <div className="w-52 min-h-screen flex flex-col flex-shrink-0" style={{ backgroundColor: "#113366" }}>

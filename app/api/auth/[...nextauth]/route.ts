@@ -8,12 +8,14 @@ export async function GET(
   req: NextRequest,
   context: { params: Promise<{ nextauth: string[] }> }
 ) {
-  return handler(req, context);
+  const params = await context.params;
+  return handler(req, { params });
 }
 
 export async function POST(
   req: NextRequest,
   context: { params: Promise<{ nextauth: string[] }> }
 ) {
-  return handler(req, context);
+  const params = await context.params;
+  return handler(req, { params });
 }
