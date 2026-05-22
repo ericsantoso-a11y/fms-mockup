@@ -46,14 +46,14 @@ const INIT_LM: ConfigRow[] = [
 ];
 
 const INIT_FM: ConfigRow[] = [
-  { stationId: "FM001", stationName: "FMHub A", weeklyNotifTime: "Monday 08:00",    dailyNotifTime: "07:30", dailyNotifDay: "D-0", dailyConfDeadline: "23:00", dailyConfDay: "D-0", callupConfDeadline: "22:00", callupConfDay: "D-0", operator: "andre.cruz@shopee.com",      minClusterQty: 2 },
-  { stationId: "FM002", stationName: "FMHub B", weeklyNotifTime: "Monday 09:00",    dailyNotifTime: "08:30", dailyNotifDay: "D-0", dailyConfDeadline: "22:00", dailyConfDay: "D-0", callupConfDeadline: "21:00", callupConfDay: "D-0", operator: "andre.cruz@shopee.com",      minClusterQty: 3 },
-  { stationId: "FM003", stationName: "FMHub C", weeklyNotifTime: "Tuesday 07:00",   dailyNotifTime: "06:45", dailyNotifDay: "D-0", dailyConfDeadline: "23:30", dailyConfDay: "D-0", callupConfDeadline: "22:30", callupConfDay: "D-0", operator: "tingting.liutt@shopee.com",  minClusterQty: 2 },
-  { stationId: "FM004", stationName: "FMHub D", weeklyNotifTime: "Monday 10:00",    dailyNotifTime: "09:30", dailyNotifDay: "D-0", dailyConfDeadline: "21:00", dailyConfDay: "D-0", callupConfDeadline: "20:00", callupConfDay: "D-0", operator: "tingting.liutt@shopee.com",  minClusterQty: 4 },
-  { stationId: "FM005", stationName: "FMHub E", weeklyNotifTime: "Wednesday 08:30", dailyNotifTime: "08:00", dailyNotifDay: "D-0", dailyConfDeadline: "22:30", dailyConfDay: "D-0", callupConfDeadline: "21:30", callupConfDay: "D-0", operator: "anderson.kohama@shopee.com", minClusterQty: 3 },
-  { stationId: "FM006", stationName: "FMHub F", weeklyNotifTime: "Monday 11:00",    dailyNotifTime: "10:30", dailyNotifDay: "D-0", dailyConfDeadline: "23:00", dailyConfDay: "D-0", callupConfDeadline: "22:00", callupConfDay: "D-0", operator: "anderson.kohama@shopee.com", minClusterQty: 2 },
-  { stationId: "FM007", stationName: "FMHub G", weeklyNotifTime: "Tuesday 06:00",   dailyNotifTime: "05:45", dailyNotifDay: "D-0", dailyConfDeadline: "20:00", dailyConfDay: "D-0", callupConfDeadline: "19:00", callupConfDay: "D-0", operator: "chao.yu@shopee.com",         minClusterQty: 5 },
-  { stationId: "FM008", stationName: "FMHub H", weeklyNotifTime: "Monday 14:00",    dailyNotifTime: "13:30", dailyNotifDay: "D-0", dailyConfDeadline: "23:59", dailyConfDay: "D-0", callupConfDeadline: "23:00", callupConfDay: "D-0", operator: "chao.yu@shopee.com",         minClusterQty: 3 },
+  { stationId: "FM001", stationName: "FMHub A", weeklyNotifTime: "Monday 08:00",    dailyNotifTime: "07:30", dailyNotifDay: "D-0", dailyConfDeadline: "23:00", dailyConfDay: "D-0", callupConfDeadline: "15 min", operator: "andre.cruz@shopee.com",      minClusterQty: 2 },
+  { stationId: "FM002", stationName: "FMHub B", weeklyNotifTime: "Monday 09:00",    dailyNotifTime: "08:30", dailyNotifDay: "D-0", dailyConfDeadline: "22:00", dailyConfDay: "D-0", callupConfDeadline: "20 min", operator: "andre.cruz@shopee.com",      minClusterQty: 3 },
+  { stationId: "FM003", stationName: "FMHub C", weeklyNotifTime: "Tuesday 07:00",   dailyNotifTime: "06:45", dailyNotifDay: "D-0", dailyConfDeadline: "23:30", dailyConfDay: "D-0", callupConfDeadline: "30 min", operator: "tingting.liutt@shopee.com",  minClusterQty: 2 },
+  { stationId: "FM004", stationName: "FMHub D", weeklyNotifTime: "Monday 10:00",    dailyNotifTime: "09:30", dailyNotifDay: "D-0", dailyConfDeadline: "21:00", dailyConfDay: "D-0", callupConfDeadline: "15 min", operator: "tingting.liutt@shopee.com",  minClusterQty: 4 },
+  { stationId: "FM005", stationName: "FMHub E", weeklyNotifTime: "Wednesday 08:30", dailyNotifTime: "08:00", dailyNotifDay: "D-0", dailyConfDeadline: "22:30", dailyConfDay: "D-0", callupConfDeadline: "20 min", operator: "anderson.kohama@shopee.com", minClusterQty: 3 },
+  { stationId: "FM006", stationName: "FMHub F", weeklyNotifTime: "Monday 11:00",    dailyNotifTime: "10:30", dailyNotifDay: "D-0", dailyConfDeadline: "23:00", dailyConfDay: "D-0", callupConfDeadline: "30 min", operator: "anderson.kohama@shopee.com", minClusterQty: 2 },
+  { stationId: "FM007", stationName: "FMHub G", weeklyNotifTime: "Tuesday 06:00",   dailyNotifTime: "05:45", dailyNotifDay: "D-0", dailyConfDeadline: "20:00", dailyConfDay: "D-0", callupConfDeadline: "10 min", operator: "chao.yu@shopee.com",         minClusterQty: 5 },
+  { stationId: "FM008", stationName: "FMHub H", weeklyNotifTime: "Monday 14:00",    dailyNotifTime: "13:30", dailyNotifDay: "D-0", dailyConfDeadline: "23:59", dailyConfDay: "D-0", callupConfDeadline: "45 min", operator: "chao.yu@shopee.com",         minClusterQty: 3 },
 ];
 
 const PAGE_SIZE = 20;
@@ -274,7 +274,7 @@ export default function DriverAvailabilityConfigPage() {
       weeklyDay: day, weeklyTime: time,
       availNotifDay:     row.dailyNotifDay    ?? "D-0", availNotifTime:     trimSecs(row.dailyNotifTime),
       availConfDay:      row.dailyConfDay     ?? "D-0", availConfDeadline:  trimSecs(row.dailyConfDeadline),
-      callupConfDay:     row.callupConfDay    ?? "D-0", callupConfDeadline: row.callupConfDeadline ? trimSecs(row.callupConfDeadline) : "",
+      callupConfDay:     row.callupConfDay    ?? "D-0", callupConfDeadline: row.callupConfDeadline ?? "",
       minClusterQty: String(row.minClusterQty),
     });
     setEditTarget(row);
@@ -518,7 +518,10 @@ export default function DriverAvailabilityConfigPage() {
             {isFM && (
               <div>
                 <RequiredLabel>Call-up Confirmation Deadline</RequiredLabel>
-                <TimePicker value={editForm.callupConfDeadline} onChange={(v) => ef("callupConfDeadline", v)} />
+                <select value={editForm.callupConfDeadline} onChange={(e) => ef("callupConfDeadline", e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-red-400">
+                  <option value="">Select</option>
+                  {["5 min","10 min","15 min","20 min","30 min","45 min","60 min"].map((d) => <option key={d} value={d}>{d}</option>)}
+                </select>
               </div>
             )}
             <div>
@@ -569,7 +572,10 @@ export default function DriverAvailabilityConfigPage() {
             {isFM && (
               <div>
                 <RequiredLabel>Call-up Confirmation Deadline</RequiredLabel>
-                <TimePicker value={createForm.callupConfDeadline} onChange={(v) => cf("callupConfDeadline", v)} />
+                <select value={createForm.callupConfDeadline} onChange={(e) => cf("callupConfDeadline", e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2 text-sm text-gray-500 focus:outline-none focus:border-red-400">
+                  <option value="">Select</option>
+                  {["5 min","10 min","15 min","20 min","30 min","45 min","60 min"].map((d) => <option key={d} value={d}>{d}</option>)}
+                </select>
               </div>
             )}
             <div>
