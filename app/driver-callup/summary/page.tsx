@@ -56,7 +56,7 @@ export default function SummaryPage() {
               <p className="text-sm font-semibold text-orange-800 mb-3">The proposed solution introduces 4 new system-driven components:</p>
               <div className="grid grid-cols-2 gap-3">
                 {[
-                  { num: "01", title: "Preference Collection", desc: "Capture driver preferred clusters, working days, and shift times via Driver App." },
+                  { num: "01", title: "[BR] Preference Collection", desc: "Capture driver preferred clusters, working days, and shift times via Driver App." },
                   { num: "02", title: "Availability Confirmation", desc: "D-1 check-in to confirm drivers will show up before they're added to the allocation pool." },
                   { num: "03", title: "Route Matching", desc: "Use preference and availability data to improve route-to-driver assignment quality." },
                   { num: "04", title: "Call-up Logic", desc: "Final confirmation step before assignment — driver reviews route details and accepts or declines." },
@@ -213,6 +213,149 @@ export default function SummaryPage() {
                 </tbody>
               </table>
             </div>
+          </div>
+        </section>
+
+        {/* Partial Feature Adoption */}
+        <section>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="w-1 h-6 rounded bg-indigo-400 inline-block flex-shrink-0" />
+            <h2 className="text-lg font-bold text-gray-900">Market Feature Adoption Scenarios</h2>
+          </div>
+          <p className="text-sm text-gray-500 mb-4 ml-3">How the system helps even when markets adopt only part of the features.</p>
+
+          <div className="space-y-4">
+
+            {/* Scenario 1: Availability Confirmation only */}
+            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+              <div className="flex items-center gap-3 px-5 py-3 bg-teal-50 border-b border-teal-100">
+                <span className="text-xs font-bold bg-teal-600 text-white px-2 py-0.5 rounded">Scenario A</span>
+                <p className="text-sm font-bold text-teal-900">Availability Confirmation Only</p>
+                <span className="ml-auto text-xs text-teal-600 font-medium">Morning / D-1 check-in</span>
+              </div>
+              <div className="p-5">
+                {/* Flow */}
+                <div className="flex items-start gap-2 mb-5 overflow-x-auto pb-1">
+                  {[
+                    { day: "D-1 / Morning", label: "Driver confirms availability", sub: "via Driver App notification", color: "bg-teal-600", light: "bg-teal-50 border-teal-200" },
+                    { day: null, label: "→", sub: null, color: "", light: "" },
+                    { day: "D-0 Route Matching", label: "System pools confirmed drivers", sub: "Unconfirmed drivers flagged", color: "bg-teal-500", light: "bg-teal-50 border-teal-200" },
+                    { day: null, label: "→", sub: null, color: "", light: "" },
+                    { day: "D-0 Assignment", label: "Dispatcher sees confirmation tag", sub: "✓ Confirmed · ✗ Not confirmed · — No response", color: "bg-indigo-600", light: "bg-indigo-50 border-indigo-200" },
+                  ].map((step, i) =>
+                    step.day === null ? (
+                      <div key={i} className="flex-shrink-0 text-gray-300 text-xl font-light self-center px-1">→</div>
+                    ) : (
+                      <div key={i} className={`flex-shrink-0 rounded-lg border p-3 min-w-[160px] ${step.light}`}>
+                        <span className={`text-xs font-bold text-white px-1.5 py-0.5 rounded inline-block mb-1.5 ${step.color}`}>{step.day}</span>
+                        <p className="text-xs font-semibold text-gray-800 leading-tight">{step.label}</p>
+                        {step.sub && <p className="text-xs text-gray-500 mt-0.5 leading-tight">{step.sub}</p>}
+                      </div>
+                    )
+                  )}
+                </div>
+
+                {/* Key benefit */}
+                <div className="flex items-start gap-3 bg-teal-50 rounded-lg p-4 border border-teal-100">
+                  <div className="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
+                    <svg className="w-4 h-4 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-teal-900 mb-1">Key benefit for dispatcher</p>
+                    <p className="text-xs text-teal-800 leading-relaxed">
+                      When assigning routes, the dispatcher can instantly see which drivers have confirmed they are coming today. This prevents the common situation of assigning a route to a driver who never showed up — catching the problem <strong>before</strong> assignment rather than hours later during operations.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Tag mockup */}
+                <div className="mt-4">
+                  <p className="text-xs text-gray-500 font-medium mb-2">How it appears in the assignment screen:</p>
+                  <div className="flex flex-wrap gap-2">
+                    <div className="flex items-center gap-1.5 border border-gray-200 rounded px-3 py-1.5 bg-white text-xs">
+                      <span className="font-medium text-gray-700">Driver A</span>
+                      <span className="bg-green-100 text-green-700 font-semibold px-1.5 py-0.5 rounded text-xs">✓ Confirmed</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 border border-gray-200 rounded px-3 py-1.5 bg-white text-xs">
+                      <span className="font-medium text-gray-700">Driver B</span>
+                      <span className="bg-red-100 text-red-700 font-semibold px-1.5 py-0.5 rounded text-xs">✗ Not Confirmed</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 border border-gray-200 rounded px-3 py-1.5 bg-white text-xs">
+                      <span className="font-medium text-gray-700">Driver C</span>
+                      <span className="bg-gray-100 text-gray-500 font-semibold px-1.5 py-0.5 rounded text-xs">— No Response</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Scenario 2: Call-up only */}
+            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+              <div className="flex items-center gap-3 px-5 py-3 bg-violet-50 border-b border-violet-100">
+                <span className="text-xs font-bold bg-violet-600 text-white px-2 py-0.5 rounded">Scenario B</span>
+                <p className="text-sm font-bold text-violet-900">Call-up Only</p>
+                <span className="ml-auto text-xs text-violet-600 font-medium">Post-assignment confirmation</span>
+              </div>
+              <div className="p-5">
+                {/* Flow */}
+                <div className="flex items-start gap-2 mb-5 overflow-x-auto pb-1">
+                  {[
+                    { day: "D-0 Assignment", label: "Route assigned to driver", sub: "System-matched or manual", color: "bg-violet-600", light: "bg-violet-50 border-violet-200" },
+                    { day: null, label: "→", sub: null, color: "", light: "" },
+                    { day: "Call-up Sent", label: "Driver receives notification", sub: "Route details: cluster, orders, distance, shift", color: "bg-violet-500", light: "bg-violet-50 border-violet-200" },
+                    { day: null, label: "→", sub: null, color: "", light: "" },
+                    { day: "Driver responds", label: "Accept → route confirmed", sub: "Decline → system re-matches next best driver", color: "bg-indigo-600", light: "bg-indigo-50 border-indigo-200" },
+                  ].map((step, i) =>
+                    step.day === null ? (
+                      <div key={i} className="flex-shrink-0 text-gray-300 text-xl font-light self-center px-1">→</div>
+                    ) : (
+                      <div key={i} className={`flex-shrink-0 rounded-lg border p-3 min-w-[160px] ${step.light}`}>
+                        <span className={`text-xs font-bold text-white px-1.5 py-0.5 rounded inline-block mb-1.5 ${step.color}`}>{step.day}</span>
+                        <p className="text-xs font-semibold text-gray-800 leading-tight">{step.label}</p>
+                        {step.sub && <p className="text-xs text-gray-500 mt-0.5 leading-tight">{step.sub}</p>}
+                      </div>
+                    )
+                  )}
+                </div>
+
+                {/* Key benefit */}
+                <div className="flex items-start gap-3 bg-violet-50 rounded-lg p-4 border border-violet-100">
+                  <div className="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center flex-shrink-0">
+                    <svg className="w-4 h-4 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-violet-900 mb-1">Key benefit for dispatcher</p>
+                    <p className="text-xs text-violet-800 leading-relaxed">
+                      After a route is assigned, the dispatcher can see the real-time call-up status of each driver. If a driver declines, the dispatcher knows immediately and can act — either letting the system re-match automatically or manually reassigning. This directly combats the problem of wrong or missed assignments that only surface during operations.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Tag mockup */}
+                <div className="mt-4">
+                  <p className="text-xs text-gray-500 font-medium mb-2">How it appears in the assignment screen:</p>
+                  <div className="flex flex-wrap gap-2">
+                    <div className="flex items-center gap-1.5 border border-gray-200 rounded px-3 py-1.5 bg-white text-xs">
+                      <span className="font-medium text-gray-700">Route #001 → Driver A</span>
+                      <span className="bg-green-100 text-green-700 font-semibold px-1.5 py-0.5 rounded text-xs">Accepted</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 border border-gray-200 rounded px-3 py-1.5 bg-white text-xs">
+                      <span className="font-medium text-gray-700">Route #002 → Driver B</span>
+                      <span className="bg-red-100 text-red-700 font-semibold px-1.5 py-0.5 rounded text-xs">Declined</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 border border-gray-200 rounded px-3 py-1.5 bg-white text-xs">
+                      <span className="font-medium text-gray-700">Route #003 → Driver C</span>
+                      <span className="bg-yellow-100 text-yellow-700 font-semibold px-1.5 py-0.5 rounded text-xs">Pending</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </section>
 
