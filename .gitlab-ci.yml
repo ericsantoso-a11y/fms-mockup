@@ -1,16 +1,17 @@
-image: node:20-alpine
-
 pages:
   stage: deploy
   script:
     - npm ci
-    - STATIC_EXPORT=true
-      NEXTAUTH_SECRET=static-build-secret
-      NEXTAUTH_URL=http://localhost
-      GOOGLE_CLIENT_ID=placeholder
-      GOOGLE_CLIENT_SECRET=placeholder
-      npm run build
-    - mv out public
+    - $env:STATIC_EXPORT = "true"
+    - $env:NEXTAUTH_SECRET = "static-build-secret"
+    - $env:NEXTAUTH_URL = "http://localhost"
+    - $env:GOOGLE_CLIENT_ID = "placeholder"
+    - $env:GOOGLE_CLIENT_SECRET = "placeholder"
+    - Move-Item app\api api_backup_temp -ErrorAction SilentlyContinue
+    - npm run build
+    - Move-Item api_backup_temp app\api -ErrorAction SilentlyContinue
+    - if (Test-Path public) { Remove-Item public -Recurse -Force }
+    - Move-Item out public
   artifacts:
     paths:
       - public
