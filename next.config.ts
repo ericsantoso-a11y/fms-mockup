@@ -5,7 +5,6 @@ const isStaticExport = process.env.STATIC_EXPORT === "true";
 const nextConfig: NextConfig = {
   ...(isStaticExport && {
     output: "export",
-    basePath: "/fms-mockup",
   }),
   images: {
     unoptimized: true,
