@@ -39,21 +39,15 @@ export default function SummaryPage() {
               </p>
             </div>
 
-            {/* Image placeholder: Current process */}
+            {/* Real images */}
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center min-h-[140px] text-center">
-                <svg className="w-8 h-8 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <p className="text-xs font-medium text-gray-500">Image 1</p>
-                <p className="text-xs text-gray-400 mt-0.5">Sample BR WhatsApp group chat poll for driver availability</p>
+              <div className="rounded-lg border border-gray-200 overflow-hidden">
+                <img src="/dc-bg-whatsapp.jpg" alt="TH example: dispatcher manually confirming driver attendance via WhatsApp" className="w-full object-cover" />
+                <p className="text-xs text-gray-500 px-3 py-2 bg-gray-50 border-t border-gray-100">TH Market — Dispatcher manually confirming driver attendance via WhatsApp group</p>
               </div>
-              <div className="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center min-h-[140px] text-center">
-                <svg className="w-8 h-8 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <p className="text-xs font-medium text-gray-500">Image 2</p>
-                <p className="text-xs text-gray-400 mt-0.5">Current Driver Call-up and Matching process in BR</p>
+              <div className="rounded-lg border border-gray-200 overflow-hidden">
+                <img src="/dc-bg-current-process.png" alt="PH current Driver Call-up and Matching process" className="w-full object-contain bg-white" />
+                <p className="text-xs text-gray-500 px-3 py-2 bg-gray-50 border-t border-gray-100">PH Market — Current manual call-up and matching process</p>
               </div>
             </div>
 
@@ -78,13 +72,10 @@ export default function SummaryPage() {
               </div>
             </div>
 
-            {/* Image placeholder: Timeline */}
-            <div className="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center min-h-[120px] text-center">
-              <svg className="w-8 h-8 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              <p className="text-xs font-medium text-gray-500">Image 3</p>
-              <p className="text-xs text-gray-400 mt-0.5">End-to-end timeline and workflow of driver availability confirmation</p>
+            {/* New process diagram */}
+            <div className="rounded-lg border border-gray-200 overflow-hidden">
+              <img src="/dc-bg-new-process.png" alt="New end-to-end driver availability and call-up workflow" className="w-full object-contain bg-white" />
+              <p className="text-xs text-gray-500 px-3 py-2 bg-gray-50 border-t border-gray-100">Proposed new workflow — D-14 Preference Collection → D-1 Availability Confirmation → D-0 Route Matching, Call-up & Assignment</p>
             </div>
           </div>
         </section>
