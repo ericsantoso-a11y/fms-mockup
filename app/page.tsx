@@ -1,5 +1,11 @@
-import { redirect } from "next/navigation";
+"use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function RootPage() {
-  redirect("/pickup-group/list");
+  const router = useRouter();
+  useEffect(() => {
+    router.replace("/pickup-group/list");
+  }, [router]);
+  return null;
 }

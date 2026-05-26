@@ -1,0 +1,18 @@
+image: node:20-alpine
+
+pages:
+  stage: deploy
+  script:
+    - npm ci
+    - STATIC_EXPORT=true
+      NEXTAUTH_SECRET=static-build-secret
+      NEXTAUTH_URL=http://localhost
+      GOOGLE_CLIENT_ID=placeholder
+      GOOGLE_CLIENT_SECRET=placeholder
+      npm run build
+    - mv out public
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
