@@ -98,6 +98,13 @@ const ctItems = [
       { label: "FM Control Tower Metrics", href: "/control-tower/fm-metrics" },
     ],
   },
+  {
+    label: "Rules",
+    defaultOpen: true,
+    children: [
+      { label: "Control Tower Rules", href: "/control-tower/rules" },
+    ],
+  },
 ];
 
 
