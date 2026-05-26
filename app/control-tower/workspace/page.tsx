@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import FMSLayout from "@/components/FMSLayout";
 import FloatingWhatsNew from "@/components/FloatingWhatsNew";
@@ -54,28 +54,14 @@ export default function WorkspacePage() {
   const [bannerP1, setBannerP1] = useState(2);
   const [bannerP2, setBannerP2] = useState(2);
 
-  // Health thresholds (configurable)
-  const [healthyThreshold, setHealthyThreshold] = useState(80);
-  const [criticalThreshold, setCriticalThreshold] = useState(20);
+  // Health thresholds — configured centrally in Control Tower Dashboard
+  const healthyThreshold = 80;
+  const criticalThreshold = 20;
 
-  // KPI targets (configurable)
-  const [kpiArtTarget, setKpiArtTarget] = useState(2);
-  const [kpiSlaTarget, setKpiSlaTarget] = useState(98);
-  const [kpiBreachTarget, setKpiBreachTarget] = useState(0);
-
-  // Config panel
-  const [showConfig, setShowConfig] = useState(false);
-  const configRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (configRef.current && !configRef.current.contains(e.target as Node)) {
-        setShowConfig(false);
-      }
-    };
-    if (showConfig) document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [showConfig]);
+  // KPI targets — configured centrally in Control Tower Dashboard
+  const kpiArtTarget = 2;
+  const kpiSlaTarget = 98;
+  const kpiBreachTarget = 0;
 
   const bannerOpen = Math.max(0, bannerTotal - bannerClosed);
   const bannerP3 = Math.max(0, bannerOpen - bannerP1 - bannerP2);
@@ -224,68 +210,10 @@ export default function WorkspacePage() {
         <div className="flex-1 p-6 min-w-0 bg-gray-50">
 
           {/* Health Banner */}
-          <div className={`rounded border mb-3 px-6 py-4 relative ${bannerBg}`}>
-
-            {/* Config button — top-right corner */}
-            <div ref={configRef} className="absolute top-3 right-3">
-              <button
-                onClick={() => setShowConfig(v => !v)}
-                title="Configure thresholds & targets"
-                className={`w-6 h-6 flex items-center justify-center rounded transition-colors ${showConfig ? "bg-gray-200 text-gray-700" : "text-gray-400 hover:text-gray-600 hover:bg-white/60"}`}
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-              </button>
-
-              {showConfig && (
-                <div className="absolute right-0 top-full mt-1 w-72 bg-white rounded-lg shadow-xl border border-gray-200 z-50 p-4 space-y-4">
-                  <p className="text-xs font-bold text-gray-700 uppercase tracking-wide">Banner Configuration</p>
-
-                  {/* Health Thresholds */}
-                  <div>
-                    <p className="text-xs font-semibold text-gray-600 mb-2 flex items-center gap-1">
-                      <span className="w-2 h-2 rounded-full bg-yellow-400 inline-block" />
-                      Health Thresholds (% closed)
-                    </p>
-                    <div className="space-y-2">
-                      <ConfigRow
-                        label={<span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500 inline-block" /> Healthy if ≥</span>}
-                        value={healthyThreshold}
-                        suffix="%"
-                        onChange={v => setHealthyThreshold(Math.max(criticalThreshold + 1, Math.min(100, v)))}
-                      />
-                      <ConfigRow
-                        label={<span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500 inline-block" /> Critical if &lt;</span>}
-                        value={criticalThreshold}
-                        suffix="%"
-                        onChange={v => setCriticalThreshold(Math.max(0, Math.min(healthyThreshold - 1, v)))}
-                      />
-                    </div>
-                    <p className="text-xs text-gray-400 mt-1.5">Moderate = between Critical and Healthy thresholds</p>
-                  </div>
-
-                  <div className="border-t border-gray-100" />
-
-                  {/* KPI Targets */}
-                  <div>
-                    <p className="text-xs font-semibold text-gray-600 mb-2 flex items-center gap-1">
-                      <span className="w-2 h-2 rounded-full bg-blue-400 inline-block" />
-                      KPI Targets
-                    </p>
-                    <div className="space-y-2">
-                      <ConfigRow label="Avg. Resolution Time" value={kpiArtTarget} suffix="hrs" onChange={v => setKpiArtTarget(Math.max(0, v))} />
-                      <ConfigRow label="SLA Adherence" value={kpiSlaTarget} suffix="%" onChange={v => setKpiSlaTarget(Math.min(100, Math.max(0, v)))} />
-                      <ConfigRow label="Tickets Breaching SLA" value={kpiBreachTarget} suffix="" onChange={v => setKpiBreachTarget(Math.max(0, v))} />
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+          <div className={`rounded border mb-3 px-6 py-4 ${bannerBg}`}>
 
             {/* Banner content row */}
-            <div className="flex items-center gap-8 pr-6">
+            <div className="flex items-center gap-8">
               {/* Overall Health */}
               <div className="flex-shrink-0 min-w-[160px]">
                 <div className="flex items-center gap-1.5 mb-1">
@@ -299,7 +227,8 @@ export default function WorkspacePage() {
                     </div>
                   </KpiTooltip>
                 </div>
-                <span className={`text-3xl font-bold ${healthColor}`}>{health}</span>
+                <div className={`text-3xl font-bold ${healthColor}`}>{health}</div>
+                <div className={`text-sm font-medium mt-0.5 ${healthColor} opacity-75`}>{Math.round(closedPct)}% closed</div>
               </div>
 
               <div className="w-px self-stretch bg-gray-300 flex-shrink-0" />
@@ -576,8 +505,8 @@ export default function WorkspacePage() {
             description: "Banner includes Avg. Resolution Time, SLA Adherence, and Tickets Breaching SLA — each with a target value and an explanatory tooltip.",
           },
           {
-            title: "Configurable Thresholds & Targets",
-            description: "Click the gear icon (⚙) on the banner to adjust health thresholds (Healthy / Critical %) and KPI target values at any time.",
+            title: "Centralized Configuration",
+            description: "Health thresholds and KPI targets are configured in the Control Tower Dashboard. Workspace reflects those settings automatically.",
           },
         ]}
       />
@@ -597,26 +526,6 @@ function KpiTooltip({ children }: { children: React.ReactNode }) {
   );
 }
 
-function ConfigRow({ label, value, suffix, onChange }: { label: React.ReactNode; value: number; suffix: string; onChange: (v: number) => void }) {
-  return (
-    <div className="flex items-center justify-between gap-2">
-      <span className="text-xs text-gray-600 flex items-center gap-1">{label}</span>
-      <div className="flex items-center gap-1 flex-shrink-0">
-        <input
-          type="number"
-          value={value}
-          onChange={e => onChange(Number(e.target.value))}
-          onKeyDown={e => {
-            if (e.key === "ArrowUp") { e.preventDefault(); onChange(value + 1); }
-            if (e.key === "ArrowDown") { e.preventDefault(); onChange(value - 1); }
-          }}
-          className="w-14 border border-gray-300 rounded px-2 py-1 text-xs text-gray-800 text-right focus:outline-none focus:border-blue-400"
-        />
-        {suffix && <span className="text-xs text-gray-500 w-5">{suffix}</span>}
-      </div>
-    </div>
-  );
-}
 
 function WsFilterItem({ label, children }: { label: string; children: React.ReactNode }) {
   return (
