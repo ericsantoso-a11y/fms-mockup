@@ -77,6 +77,7 @@ const dcuItems = [
 ];
 
 const ctItems = [
+  { label: "Summary and Introduction", href: "/control-tower/summary" },
   {
     label: "Dashboard",
     defaultOpen: true,
