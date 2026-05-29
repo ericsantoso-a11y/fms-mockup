@@ -495,16 +495,21 @@ function SeaAvailabilityPopupMockup() {
     <PhoneShell bg="bg-gray-500">
       <div className="bg-gray-500 flex-1 flex items-center justify-center px-4 py-6 min-h-[32rem]">
         <div className="bg-white rounded-2xl shadow-xl w-full overflow-hidden">
-          <div className="px-5 pt-5 pb-4 text-center">
+          <div className="relative px-5 pt-5 pb-4 text-center">
+            <button className="absolute top-3 right-3 w-5 h-5 flex items-center justify-center rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200">
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
             <p className="font-bold text-gray-900 text-sm mb-2">Availability Confirmation</p>
             <p className="text-gray-500 text-xs leading-relaxed">
               Please confirm your availability for tomorrow before today 23:59:59
             </p>
           </div>
           <div className="border-t border-gray-100 flex">
-            <button className="flex-1 py-3 text-sm text-gray-400">Later</button>
+            <button className="flex-1 py-3 text-sm text-gray-400">Not Available</button>
             <div className="w-px bg-gray-100" />
-            <button className="flex-1 py-3 text-sm text-orange-500 font-semibold">Confirm Now</button>
+            <button className="flex-1 py-3 text-sm text-orange-500 font-semibold">Confirm Available</button>
           </div>
         </div>
       </div>
