@@ -22,10 +22,21 @@ const METRICS: Record<string, Record<string, string[]>> = {
     "Hub Operations": ["Hub Capacity Utilization", "Processing Time", "Pending Pickup Count"],
     "Driver Performance": ["Driver Availability", "Route Efficiency", "On-time Rate"],
   },
+  PUP: {
+    "PUP Status": ["Pending Order Count", "Assignment Status", "Completion Rate"],
+    "PUP Performance": ["On-time Pickup Rate", "Driver Response Time", "Backlog Count"],
+  },
 };
 
 const INTERVAL_OPTIONS = ["15 min", "30 min", "45 min", "1 h", "1 h 15 min", "1 h 30 min", "1 h 45 min", "2 h"];
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+const PUPS = [
+  "PUP-001 Lazada Pandan SC", "PUP-002 Shopee Binan Hub", "PUP-003 Tokopedia Depot 1",
+  "PUP-004 Shopee Laguna Hub", "PUP-005 Blibli Depot 2", "PUP-006 TikTok Shop Hub 3",
+  "PUP-007 Lazada Cengkareng", "PUP-008 Shopee Sunter", "PUP-009 Tokopedia Bekasi",
+  "PUP-010 Blibli Tangerang", "PUP-011 Shopee Depok", "PUP-012 Lazada Bogor",
+];
+
 const STATIONS = [
   "Pandan SC", "Binan Hub", "Depot 1", "Laguna Hub", "Depot 2", "Hub 3",
   "Cengkareng First Mile Hub", "Sunter First Mile Hub", "Bekasi First Mile Hub",
@@ -53,10 +64,13 @@ export default function CreateRulePage() {
   const [dataSource, setDataSource] = useState<"Dashboard" | "Custom Table">("Dashboard");
   const [metricType, setMetricType] = useState<"Operation" | "Global">("Operation");
   const [criteriaList, setCriteriaList] = useState<Criteria[]>([]);
-  const [scope, setScope] = useState<"All" | "Selected Driver" | "Selected Station" | "">("");
+  const [scope, setScope] = useState<"All" | "Selected Driver" | "Selected Station" | "Selected PUPs" | "">("");
   const [selectedStations, setSelectedStations] = useState<string[]>([]);
   const [stationDropdownOpen, setStationDropdownOpen] = useState(false);
   const stationDropdownRef = useRef<HTMLDivElement>(null);
+  const [selectedPups, setSelectedPups] = useState<string[]>([]);
+  const [pupDropdownOpen, setPupDropdownOpen] = useState(false);
+  const pupDropdownRef = useRef<HTMLDivElement>(null);
   const [evalFreq, setEvalFreq] = useState<"Real-time" | "Daily" | "Weekly" | "">("");
   const [interval, setIntervalVal] = useState("");
   const [dailyTimes, setDailyTimes] = useState<string[]>([]);
@@ -97,9 +111,22 @@ export default function CreateRulePage() {
     return () => document.removeEventListener("mousedown", handler);
   }, [stationDropdownOpen]);
 
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (pupDropdownRef.current && !pupDropdownRef.current.contains(e.target as Node))
+        setPupDropdownOpen(false);
+    };
+    if (pupDropdownOpen) document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [pupDropdownOpen]);
+
   const toggleStation = (s: string) =>
     setSelectedStations(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s]);
   const removeStation = (s: string) => setSelectedStations(prev => prev.filter(x => x !== s));
+
+  const togglePup = (p: string) =>
+    setSelectedPups(prev => prev.includes(p) ? prev.filter(x => x !== p) : [...prev, p]);
+  const removePup = (p: string) => setSelectedPups(prev => prev.filter(x => x !== p));
 
   const openModal = () => {
     setModalCat(""); setModalDash(""); setModalMetric(""); setModalThreshold("");
@@ -206,7 +233,7 @@ export default function CreateRulePage() {
             {/* Scope */}
             <FormRow label="Scope" required>
               <div className="space-y-3">
-                {(["All", "Selected Driver", "Selected Station"] as const).map(opt => (
+                {(["All", "Selected Driver", "Selected Station", "Selected PUPs"] as const).map(opt => (
                   <div key={opt}>
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
@@ -285,6 +312,67 @@ export default function CreateRulePage() {
                         )}
 
                         {/* Upload + Download */}
+                        <div className="flex items-center gap-2 pt-1">
+                          <label className="flex items-center gap-1.5 border border-gray-300 text-gray-600 hover:bg-gray-50 px-3 py-1.5 rounded text-sm cursor-pointer transition-colors">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                            </svg>
+                            Upload File
+                            <input type="file" accept=".csv,.xlsx" className="hidden" />
+                          </label>
+                          <button className="flex items-center gap-1.5 border border-gray-300 text-gray-600 hover:bg-gray-50 px-3 py-1.5 rounded text-sm transition-colors">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                            Download Template
+                          </button>
+                          <span className="text-xs text-gray-400">or select manually above</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Selected PUPs sub-UI */}
+                    {opt === "Selected PUPs" && scope === "Selected PUPs" && (
+                      <div className="ml-6 mt-2 space-y-2">
+                        <div ref={pupDropdownRef} className="relative">
+                          <button
+                            type="button"
+                            onClick={() => setPupDropdownOpen(v => !v)}
+                            className="w-full flex items-center justify-between border border-gray-300 rounded px-3 py-1.5 text-sm bg-white text-left focus:outline-none focus:border-blue-400 hover:border-gray-400 transition-colors"
+                          >
+                            <span className={selectedPups.length === 0 ? "text-gray-400" : "text-gray-700"}>
+                              {selectedPups.length === 0 ? "Select PUPs…" : `${selectedPups.length} PUP${selectedPups.length > 1 ? "s" : ""} selected`}
+                            </span>
+                            <svg className={`w-4 h-4 text-gray-400 transition-transform ${pupDropdownOpen ? "rotate-180" : ""}`} fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                            </svg>
+                          </button>
+                          {pupDropdownOpen && (
+                            <div className="absolute z-30 top-full mt-1 w-full bg-white border border-gray-200 rounded shadow-lg max-h-52 overflow-y-auto">
+                              {PUPS.map(p => (
+                                <label key={p} className="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    checked={selectedPups.includes(p)}
+                                    onChange={() => togglePup(p)}
+                                    className="flex-shrink-0 accent-red-600"
+                                  />
+                                  <span className="text-sm text-gray-700">{p}</span>
+                                </label>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        {selectedPups.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5">
+                            {selectedPups.map(p => (
+                              <span key={p} className="flex items-center gap-1 bg-blue-50 border border-blue-200 text-blue-700 text-xs px-2 py-1 rounded">
+                                {p}
+                                <button onClick={() => removePup(p)} className="text-blue-400 hover:text-blue-700 ml-0.5">×</button>
+                              </span>
+                            ))}
+                          </div>
+                        )}
                         <div className="flex items-center gap-2 pt-1">
                           <label className="flex items-center gap-1.5 border border-gray-300 text-gray-600 hover:bg-gray-50 px-3 py-1.5 rounded text-sm cursor-pointer transition-colors">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
